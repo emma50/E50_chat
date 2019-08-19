@@ -5,10 +5,10 @@ const socket = io();
 socket.on("connect", function () {  // "connect" a built-in socket.io event
     console.log("Connected to server");
 
-    socket.emit("createMessage", {
-        to: "john@example.com",
-        text: "Hey! This is a new Message"
-    })
+    // socket.emit("createMessage", {
+    //     from: "john@example.com",
+    //     text: "Hey! This is a new Message"
+    // })
 
     // socket.emit("createEmail", {
     //     to: "john@example.com",

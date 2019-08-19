@@ -23,15 +23,23 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
     //     text: "Hey watsup!",
     //     createdAt: new Date()
     // });   
+    
+    // socket.emit() emits event to a single connection
+    // socket.emit("newMessage", {    // this starts up the newMessage event --- the server received a message send it to the client 
+    //     from: "daniella@example.com",
+    //     text: "Hey!",
+    //     createdAt: new Date()
+    // });    
 
-    socket.emit("newMessage", {    // this starts up the newMessage event --- the server received a message send it to the client 
-        from: "daniella@example.com",
-        text: "Hey!",
-        createdAt: new Date()
-    });    
+    socket.on("createMessage", (message) => {    // this is a custom event 
+        console.log("createMessage:", message);
 
-    socket.on("createMessage", (newMessage) => {    // this is a custom event 
-        console.log("createMessage:", newMessage);
+        // io.emit() emits events to every single connection
+        io.emit("newMessage", {
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        })
     })    
 
     // socket.on("createEmail", (newEmail) => {    // this is a custom event 
