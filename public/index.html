@@ -8,5 +8,21 @@
 </head>
 <body>
     <p><b>Welcome to the chat app</b></p>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // initiating the request. making a request from the client to the server to open up a web socket and keep 
+        // the connection open we make use of the below method available to us because we loaded the above library
+        const socket = io();    
+        
+        socket.on("connect", () => {  // "connect" a built-in socket.io event
+            console.log("Connected to server");
+        })
+
+        socket.on("disconnect", () => {  
+            console.log("Disconnected from server");
+        })
+
+    </script>
 </body>
 </html>
