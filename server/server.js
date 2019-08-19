@@ -1,5 +1,6 @@
 const path = require("path");
 const http = require("http");
+
 const express = require("express");
 const socketIO = require("socket.io");
 
@@ -31,6 +32,18 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
     //     createdAt: new Date()
     // });    
 
+    socket.emit("newMessage", {    
+        from: "Admin",
+        text: "Welcome to the chat app",
+        createdAt: new Date()
+    });   
+
+    socket.broadcast.emit("newMessage", {    
+        from: "Admin",
+        text: "New user joined",
+        createdAt: new Date()
+    }); 
+
     socket.on("createMessage", (message) => {    // this is a custom event 
         console.log("createMessage:", message);
 
@@ -40,6 +53,15 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
             text: message.text,
             createdAt: new Date().getTime()
         })
+
+        // Broadcasting is a way to emit events to everybody but one specific user
+        // To broadcast we specify the individual socket --- this lets the socket.io library to know which user 
+        // should not get the event. meaning the user called here will not get the event
+        // socket.broadcast.emit("newMessage", {    // NOTE: broadcast has it's own emit function
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // })     
     })    
 
     // socket.on("createEmail", (newEmail) => {    // this is a custom event 
