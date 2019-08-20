@@ -49,10 +49,14 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
     //     createdAt: new Date()
     // }); 
 
-    socket.on("createMessage", (message) => {    // this is a custom event 
+    socket.on("createMessage", (message, callback) => {    // the server serves an Acknowledgement to the client/emitter notifying the client if things went well or not by calling the callback
         console.log("createMessage:", message);
 
-        io.emit("newMessage", generateMessage(message.from, message.text))
+        io.emit("newMessage", generateMessage(message.from, message.text));
+        callback({    // the callback is called
+            text: "This is from the server ",
+            accepted: true + "!"
+        });   
 
         // io.emit() emits events to every single connection
         // io.emit("newMessage", {
