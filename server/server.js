@@ -4,6 +4,7 @@ const http = require("http");
 const express = require("express");
 const socketIO = require("socket.io");
 
+const {generateMessage} = require("./utils/message");
 const publicPath = path.join(__dirname, "../public");
 const port = process.env.PORT || 3000;
 const app = express();
@@ -18,7 +19,11 @@ const io = socketIO(server)       // here is how we communicate between the serv
 // register an event listener with .on() method --- "connection" built-in socket.io event
 io.on("connection", (socket) => {  // the socket argument here is similar to the one we had access to in index.html. it represents the individual socket
     console.log("New user connected");
+
+    socket.emit("newMessage", generateMessage("Admin", "Welcome to the chat app"));   
     
+    socket.broadcast.emit("newMessage", generateMessage("Admin", "New user joined")); 
+
     // socket.emit("newEmail", {    // this starts up the newEmail event --- the server received an email send it to the client 
     //     from: "emmanuel@example.com",
     //     text: "Hey watsup!",
@@ -32,27 +37,29 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
     //     createdAt: new Date()
     // });    
 
-    socket.emit("newMessage", {    
-        from: "Admin",
-        text: "Welcome to the chat app",
-        createdAt: new Date()
-    });   
+    //  socket.emit("newMessage", {    
+    //     from: "Admin",
+    //     text: "Welcome to the chat app",
+    //     createdAt: new Date()
+    // })
 
-    socket.broadcast.emit("newMessage", {    
-        from: "Admin",
-        text: "New user joined",
-        createdAt: new Date()
-    }); 
+    // socket.broadcast.emit("newMessage", {    
+    //     from: "Admin",
+    //     text: "New user joined",
+    //     createdAt: new Date()
+    // }); 
 
     socket.on("createMessage", (message) => {    // this is a custom event 
         console.log("createMessage:", message);
 
+        io.emit("newMessage", generateMessage(message.from, message.text))
+
         // io.emit() emits events to every single connection
-        io.emit("newMessage", {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        })
+        // io.emit("newMessage", {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // })
 
         // Broadcasting is a way to emit events to everybody but one specific user
         // To broadcast we specify the individual socket --- this lets the socket.io library to know which user 
