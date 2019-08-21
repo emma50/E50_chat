@@ -4,7 +4,7 @@ const http = require("http");
 const express = require("express");
 const socketIO = require("socket.io");
 
-const {generateMessage} = require("./utils/message");
+const {generateMessage, generateLocationMessage} = require("./utils/message");
 const publicPath = path.join(__dirname, "../public");
 const port = process.env.PORT || 3000;
 const app = express();
@@ -20,15 +20,10 @@ const io = socketIO(server)       // here is how we communicate between the serv
 io.on("connection", (socket) => {  // the socket argument here is similar to the one we had access to in index.html. it represents the individual socket
     console.log("New user connected");
 
-    socket.emit("newMessage", generateMessage("Admin", "Welcome to the chat app"));   
+    // socket.emit() emits event to a single connection
+    socket.emit("newMessage", generateMessage("Admin: ", "Welcome to the chat app"));   
     
-    socket.broadcast.emit("newMessage", generateMessage("Admin", "New user joined")); 
-
-    // socket.emit("newEmail", {    // this starts up the newEmail event --- the server received an email send it to the client 
-    //     from: "emmanuel@example.com",
-    //     text: "Hey watsup!",
-    //     createdAt: new Date()
-    // });   
+    socket.broadcast.emit("newMessage", generateMessage("Admin: ", "New user joined"));  
     
     // socket.emit() emits event to a single connection
     // socket.emit("newMessage", {    // this starts up the newMessage event --- the server received a message send it to the client 
@@ -36,18 +31,6 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
     //     text: "Hey!",
     //     createdAt: new Date()
     // });    
-
-    //  socket.emit("newMessage", {    
-    //     from: "Admin",
-    //     text: "Welcome to the chat app",
-    //     createdAt: new Date()
-    // })
-
-    // socket.broadcast.emit("newMessage", {    
-    //     from: "Admin",
-    //     text: "New user joined",
-    //     createdAt: new Date()
-    // }); 
 
     socket.on("createMessage", (message, callback) => {    // the server serves an Acknowledgement to the client/emitter notifying the client if things went well or not by calling the callback
         console.log("createMessage:", message);
@@ -75,6 +58,11 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
         // })     
     })    
 
+    socket.on("createLocationMessage", (coords) => {
+        // io.emit("newMessage", generateMessage("Admin: ", `${coords.latitude}, ${coords.longitude}`))
+        io.emit("newLocationMessage", generateLocationMessage("Admin: ", coords.latitude, coords.longitude))
+    })
+
     // socket.on("createEmail", (newEmail) => {    // this is a custom event 
     //     console.log("createEmail:", newEmail);
     // })  
@@ -86,18 +74,4 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
 
 server.listen(port, () => {
     console.log(`server running on port ${port}`);
-})
-
-
-
-// console.log(__dirname + "/../public");
-// console.log(publicPath);
-
-// app.get("/", (req, res) => {
-//     // res.send(publicPath);
-//     res.sendFile(publicPath);
-// })
-
-// app.listen(port, () => {
-//     console.log(`server running on port ${port}`);
-// })
+});

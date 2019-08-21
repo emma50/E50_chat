@@ -25,7 +25,21 @@ socket.on("newMessage", function (message) {  // "newMessage" a custom event ---
     console.log("new Message:", message);
 
     let li = document.createElement("li");
-    li.innerText = `${message.from}, ${message.text}`;
+    li.innerText = `${message.from} ${message.text}`;
+
+    let ol = document.getElementById("messages");
+    ol.append(li);
+}) 
+
+socket.on("newLocationMessage", function (message) {  // "newLocationMessage" a custom event --- this listens to the newLocationMessage event emitted/created on server.js
+    let li = document.createElement("li");
+    li.innerText = `${message.from}`;
+
+    let a = document.createElement("a");
+    a.innerText = "My current Location";
+    a.target = "_blank";
+    a.href = `${message.url}`;
+    li.append(a);
 
     let ol = document.getElementById("messages");
     ol.append(li);
@@ -39,10 +53,6 @@ socket.on("newMessage", function (message) {  // "newMessage" a custom event ---
 //     console.log(`Got it ---> ${message.text}, ${message.accepted}`);
 // })
 
-// socket.on("newEmail", function (email) {  // "newEmail" a custom event --- this listens to the newEmail event emitted/created on server.js
-//     console.log("new Email:", email);
-// })
-
 let msg = document.getElementById("message-form");
 let input = document.getElementById("input");
 
@@ -50,9 +60,29 @@ msg.addEventListener("submit", function (e) {
     e.preventDefault();   // prevents the form from sending and reloading the page which is the default
 
     socket.emit("createMessage", {
-        from: "User",
+        from: "User: ",
         text: input.value
     }, function () {    // this function is to run Acknowledgement
         //
+    })
+})
+
+let locationBtn = document.getElementById("send-location");
+
+locationBtn.addEventListener("click", function () {
+    if (!navigator.geolocation) {  // verifies if the user browser has the inbuilt navigator geolocation API supported
+        return alert("Geolocation not supported by your browser");
+    }
+
+    // fetch/get a users current position we use a method available to geolocation called getCurrentPosition()
+    // NOTE: getCurrentPosition(successCallback, errorCallback) takes two argument successCallback, errorCallback
+    navigator.geolocation.getCurrentPosition(function (position) {  // the success callback takes the position parameter
+        // console.log(position);
+        socket.emit("createLocationMessage", {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        })
+    }, function () {    // the error callback
+        alert("Unable to fetch location")
     })
 })
