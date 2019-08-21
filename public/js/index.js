@@ -63,7 +63,7 @@ msg.addEventListener("submit", function (e) {
         from: "User: ",
         text: input.value
     }, function () {    // this function is to run Acknowledgement
-        //
+        input.value = "";     // clear the input value
     })
 })
 
@@ -74,15 +74,22 @@ locationBtn.addEventListener("click", function () {
         return alert("Geolocation not supported by your browser");
     }
 
+    // disable location button after ascertaining the browser supports geolocation API
+    locationBtn.setAttribute("disabled", "disabled");
+    locationBtn.innerText = "Sending location...";     // change locationBtn text
+
     // fetch/get a users current position we use a method available to geolocation called getCurrentPosition()
     // NOTE: getCurrentPosition(successCallback, errorCallback) takes two argument successCallback, errorCallback
     navigator.geolocation.getCurrentPosition(function (position) {  // the success callback takes the position parameter
-        // console.log(position);
+        locationBtn.disabled = false;     // re-enable the disabled button
+        locationBtn.innerText = "Send location";    // reset locationBtn back to original value
         socket.emit("createLocationMessage", {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         })
     }, function () {    // the error callback
+        locationBtn.disabled = false;     // re-enable the disabled button if we could not get location
+        locationBtn.innerText = "Send location";   // reset locationBtn back to original value
         alert("Unable to fetch location")
     })
 })
