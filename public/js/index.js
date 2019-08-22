@@ -24,16 +24,18 @@ socket.on("disconnect", function () {  // "disconnect" a built-in socket.io even
 socket.on("newMessage", function (message) {  // "newMessage" a custom event --- this listens to the newMessage event emitted/created on server.js
     console.log("new Message:", message);
 
+    let timeStamp = moment(message.createdAt).format("h:mm a");
     let li = document.createElement("li");
-    li.innerText = `${message.from} ${message.text}`;
+    li.innerText = `${message.from}  ${timeStamp}: ${message.text}`;
 
     let ol = document.getElementById("messages");
     ol.append(li);
 }) 
 
 socket.on("newLocationMessage", function (message) {  // "newLocationMessage" a custom event --- this listens to the newLocationMessage event emitted/created on server.js
+    let timeStamp = moment(message.createdAt).format("h:mm a");
     let li = document.createElement("li");
-    li.innerText = `${message.from}`;
+    li.innerText = `${message.from}  ${timeStamp}:`;
 
     let a = document.createElement("a");
     a.innerText = "My current Location";
