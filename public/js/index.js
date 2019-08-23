@@ -1,6 +1,23 @@
 // initiating the request. making a request from the client to the server to open up a web socket and keep 
 // the connection open we make use of the below method available to us because we loaded the above library
 const socket = io();    
+
+function scrollToBottom() {
+    // Selectors
+    let messages = $("#messages");
+    let newMessage = messages.children("li:last-child");    // get the last list item
+    // Heights
+    let clientHeight = messages.prop("clientHeight");
+    let scrollTop = messages.prop("scrollTop");
+    let scrollHeight = messages.prop("scrollHeight");
+    let newMessageHeight = newMessage.innerHeight();     // get the last list item inner height
+    let lastMessageHeight = newMessage.prev().innerHeight();    // get the second to the last list item's inner height
+
+    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+        messages.scrollTop(scrollHeight);    // pass in scrollHeight to scrollTop() to get the total height of container
+    }
+
+}
         
 socket.on("connect", function () {  // "connect" a built-in socket.io event
     console.log("Connected to server");
@@ -33,6 +50,7 @@ socket.on("newMessage", function (message) {  // "newMessage" a custom event ---
     });
  
     $("#messages").append(html);
+    scrollToBottom();
 
     // let timeStamp = moment(message.createdAt).format("h:mm a");
     // let li = document.createElement("li");
@@ -52,6 +70,7 @@ socket.on("newLocationMessage", function (message) {  // "newLocationMessage" a 
     });
  
     $("#messages").append(html);
+    scrollToBottom();
 
     // let li = document.createElement("li");
     // li.innerText = `${message.from}  ${timeStamp}:`;
