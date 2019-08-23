@@ -23,28 +23,47 @@ socket.on("disconnect", function () {  // "disconnect" a built-in socket.io even
 
 socket.on("newMessage", function (message) {  // "newMessage" a custom event --- this listens to the newMessage event emitted/created on server.js
     console.log("new Message:", message);
-
+    // let template = $("#message-template").text();
     let timeStamp = moment(message.createdAt).format("h:mm a");
-    let li = document.createElement("li");
-    li.innerText = `${message.from}  ${timeStamp}: ${message.text}`;
+    let template = $("#message-template").html();
+    let html = Mustache.render(template, {
+        text:  message.text,
+        from: message.from,
+        createdAt: `${timeStamp}:`
+    });
+ 
+    $("#messages").append(html);
 
-    let ol = document.getElementById("messages");
-    ol.append(li);
+    // let timeStamp = moment(message.createdAt).format("h:mm a");
+    // let li = document.createElement("li");
+    // li.innerText = `${message.from}  ${timeStamp}: ${message.text}`;
+
+    // let ol = document.getElementById("messages");
+    // ol.append(li);
 }) 
 
 socket.on("newLocationMessage", function (message) {  // "newLocationMessage" a custom event --- this listens to the newLocationMessage event emitted/created on server.js
     let timeStamp = moment(message.createdAt).format("h:mm a");
-    let li = document.createElement("li");
-    li.innerText = `${message.from}  ${timeStamp}:`;
+    let template = $("#location-message-template").html();
+    let html = Mustache.render(template, {
+        url:  message.url,
+        from: message.from,
+        createdAt: `${timeStamp}:`
+    });
+ 
+    $("#messages").append(html);
 
-    let a = document.createElement("a");
-    a.innerText = "My current Location";
-    a.target = "_blank";
-    a.href = `${message.url}`;
-    li.append(a);
+    // let li = document.createElement("li");
+    // li.innerText = `${message.from}  ${timeStamp}:`;
 
-    let ol = document.getElementById("messages");
-    ol.append(li);
+    // let a = document.createElement("a");
+    // a.innerText = "My current Location";
+    // a.target = "_blank";
+    // a.href = `${message.url}`;
+    // li.append(a);
+
+    // let ol = document.getElementById("messages");
+    // ol.append(li);
 }) 
 
 // socket.emit("createMessage", {
