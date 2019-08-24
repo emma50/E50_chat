@@ -57,9 +57,12 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
     // });    
 
     socket.on("createMessage", (message, callback) => {    // the server serves an Acknowledgement to the client/emitter notifying the client if things went well or not by calling the callback
-        console.log("createMessage:", message);
+        let user = users.getUser(socket.id);
 
-        io.emit("newMessage", generateMessage(message.from, message.text));
+        if (user && isRealString(message.text)) {   // verify user exist and it's a string
+            return io.to(user.room).emit("newMessage", generateMessage(user.name, message.text));
+        }
+
         callback();     // the callback is called
 
         // io.emit() emits events to every single connection
@@ -80,8 +83,13 @@ io.on("connection", (socket) => {  // the socket argument here is similar to the
     })    
 
     socket.on("createLocationMessage", (coords) => {
-        // io.emit("newMessage", generateMessage("Admin: ", `${coords.latitude}, ${coords.longitude}`))
-        io.emit("newLocationMessage", generateLocationMessage("Admin", coords.latitude, coords.longitude))
+        let user = users.getUser(socket.id);
+
+        if (user) {   // verify user exist and it's a string
+            return io.to(user.room).emit("newLocationMessage", generateLocationMessage(user.name, coords.latitude, coords.longitude))
+        }
+
+        callback();     
     })
 
     // socket.on("createEmail", (newEmail) => {    // this is a custom event 

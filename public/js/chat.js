@@ -123,7 +123,6 @@ msg.addEventListener("submit", function (e) {
     e.preventDefault();   // prevents the form from sending and reloading the page which is the default
 
     socket.emit("createMessage", {
-        from: "User: ",
         text: input.value
     }, function () {    // this function is to run Acknowledgement
         input.value = "";     // clear the input value
