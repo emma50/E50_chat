@@ -21,6 +21,16 @@ function scrollToBottom() {
         
 socket.on("connect", function () {  // "connect" a built-in socket.io event
     console.log("Connected to server");
+    var params = $.deparam(window.location.search);
+
+    socket.emit("join", params, function (err) {    // join is a custom event 
+        if (err) {
+            alert(err);
+            window.location.href = "/"    // if error exist - re-direct user to root page
+        } else {
+           console.log("No error")    // print this if no error exist 
+        }
+    })   
 
     // socket.emit("createMessage", {
     //     from: "john@example.com",
@@ -36,6 +46,19 @@ socket.on("connect", function () {  // "connect" a built-in socket.io event
 
 socket.on("disconnect", function () {  // "disconnect" a built-in socket.io event 
     console.log("Disconnected from server");
+})
+
+socket.on("updateUserList", function (users) {
+    // console.log("Users list:", users);
+    let ol = document.createElement("ol");
+    // iterate over every user
+    users.forEach((user) => {
+        let li = document.createElement("li");
+        li.innerText = user;
+        ol.append(li);
+    })
+
+    $("#users").html(ol);
 })
 
 socket.on("newMessage", function (message) {  // "newMessage" a custom event --- this listens to the newMessage event emitted/created on server.js
