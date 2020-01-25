@@ -3,9 +3,9 @@ const {Users} = require("./users");
 
 describe("Users", () => {
     let users;
-    beforeEach(() => {     // beforeEach() runs before every single method, helping us initialize some data
+    beforeEach(() => {     
        users = new Users();
-       users.users = [{     // initialize the new users array
+       users.users = [{     
             id: "1",
             name: "John",
             room: "The Thinkers Gang"
@@ -21,15 +21,15 @@ describe("Users", () => {
     })
 
     it("should add new user", () => {
-        let users = new Users();    // the Users class Object
-        let user = {       // user as an instance --- instance of the Users class Object
+        let users = new Users();    
+        let user = {       
             id: "abc123",
             name: "Emmanuel",
             room: "The Fans Club"
         }
         let resUser = users.addUser(user.id, user.name, user.room);
 
-        expect(users.users).toEqual([user]);   // expect users.users to be updated
+        expect(users.users).toEqual([user]);   
     })
 
     it("should remove user", () => {
