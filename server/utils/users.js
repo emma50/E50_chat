@@ -16,14 +16,13 @@ class Users {
     }
 
     removeUser(id) {
-        // let user = this.users.find((user) => user.id == id);
         let user = this.getUser(id);
 
         if (user) {
             this.users = this.users.filter((user) => user.id !== id)  // not the user
         }
 
-        return user;    // return not the user
+        return user;
     }
 
     getUser(id) {
